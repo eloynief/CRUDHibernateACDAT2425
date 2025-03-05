@@ -231,7 +231,7 @@ public class Main {
                         if (alumno != null) {
                             System.out.println(alumno);
                         } else {
-                            System.out.println("No se encontro alumno con ID: " + id);
+                            System.out.println(Ansi.colorize(("No se encontro alumno con ID: " + id),Attribute.BACK_COLOR(200, 0, 0)));
                         }
                         break;
                     }
@@ -242,7 +242,7 @@ public class Main {
                         if (matricula != null) {
                             System.out.println(matricula);
                         } else {
-                            System.out.println("No se encontro matricula con ID: " + id);
+                            System.out.println(Ansi.colorize(("No se encontro matricula con ID: " + id),Attribute.BACK_COLOR(200, 0, 0)));
                         }
                         break;
                     }
@@ -253,7 +253,7 @@ public class Main {
                         if (profesor != null) {
                             System.out.println(profesor);
                         } else {
-                            System.out.println("No se encontro profesor con ID: " + id);
+                            System.out.println(Ansi.colorize(("No se encontro profesor con ID: " + id),Attribute.BACK_COLOR(200, 0, 0)));
                         }
                         break;
                     }
@@ -310,7 +310,7 @@ public class Main {
                 dato = sc.nextInt();
                 entradaValida = true;
             } catch (InputMismatchException i) {
-                System.err.println("Tipo de dato no valido");
+                System.out.println(Ansi.colorize(("Tipo de dato no valido"),Attribute.BACK_COLOR(200, 50, 50),Attribute.BLACK_TEXT()));
                 sc.nextLine();
             }
         } while (!entradaValida);
@@ -322,7 +322,7 @@ public class Main {
     	System.out.println("   /  o   o  \\");
     	System.out.println("  ( ==  ^  == )");
     	System.out.println("   )         (");
-    	System.out.println("  (           )");
+    	System.out.println("  /           \\");
     	System.out.println(" ( (  )   (  ) )");
     	System.out.println("(__(__)___(__)__)");
     	
