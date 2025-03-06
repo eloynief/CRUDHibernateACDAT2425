@@ -35,6 +35,7 @@ public class Main {
         
         int opcion = 0;
         int id = 0;
+        String texto="";
 
         try {
             Conexion.setUp();
@@ -225,6 +226,22 @@ public class Main {
                     
                     switch (opcion) {
                     case 1: {
+                    	
+                    	System.out.println("Elige la opcion a filtrar: 1: Nombre, 2: Apellido, 3:");
+                    	
+                    	do {
+                    		if(opcion<1||opcion>3) {
+                    			System.out.println("Opcion no valida");
+                    		}
+                    	}while(opcion<1||opcion>3);
+                    	
+                    	System.out.println("Introduce el valor de la opcion que vas a usar como filtro:");
+                    	texto=sc.nextLine();
+                    	
+                    	
+                    	List<Alumnado> als=CRUD.filtrarAlumnos(alumnos, id, texto);
+                    	
+                    	/**
                     	System.out.println("Introduce el ID");
                         id = introducirInt();
                         alumno = CRUD.leerAlumnoPorID(id);
@@ -234,26 +251,44 @@ public class Main {
                             System.out.println(Ansi.colorize(("No se encontro alumno con ID: " + id),Attribute.BACK_COLOR(200, 0, 0)));
                         }
                         break;
+                        */
+                    	
                     }
                     case 2: {
-                    	System.out.println("Introduce el ID");
-                        id = introducirInt(); 
-                        matricula = CRUD.leerMatriculaPorID(id);
-                        if (matricula != null) {
-                            System.out.println(matricula);
-                        } else {
-                            System.out.println(Ansi.colorize(("No se encontro matricula con ID: " + id),Attribute.BACK_COLOR(200, 0, 0)));
+                        System.out.println("Elige la opcion a filtrar: 1: ID Alumno, 2: ID Profesor, 3: Asignatura, 4: Curso");
+                        
+                        do {
+                            if(opcion < 1 || opcion > 4) {
+                                System.out.println("Opcion no valida");
+                            }
+                        } while(opcion < 1 || opcion > 4);
+                        
+                        System.out.println("Introduce el valor de la opcion que vas a usar como filtro:");
+                        texto = sc.nextLine();
+                        
+                        List<Matricula> mats = CRUD.filtrarMatriculas(matriculas, opcion, texto);
+                        // Aquí puedes mostrar los resultados
+                        for (Matricula m : mats) {
+                            System.out.println(m);
                         }
                         break;
                     }
                     case 3: {
-                    	System.out.println("Introduce el ID");
-                        id = introducirInt(); 
-                        profesor = CRUD.leerProfesorPorID(id);
-                        if (profesor != null) {
-                            System.out.println(profesor);
-                        } else {
-                            System.out.println(Ansi.colorize(("No se encontro profesor con ID: " + id),Attribute.BACK_COLOR(200, 0, 0)));
+                        System.out.println("Elige la opcion a filtrar: 1: Nombre, 2: Apellido, 3: Fecha de nacimiento, 4: Antigüedad");
+                        
+                        do {
+                            if(opcion < 1 || opcion > 4) {
+                                System.out.println("Opcion no valida");
+                            }
+                        } while(opcion < 1 || opcion > 4);
+                        
+                        System.out.println("Introduce el valor de la opcion que vas a usar como filtro:");
+                        texto = sc.nextLine();
+                        
+                        List<Profesor> profs = CRUD.filtrarProfesores(profesores, opcion, texto);
+                        // Aquí puedes mostrar los resultados
+                        for (Profesor p : profs) {
+                            System.out.println(p);
                         }
                         break;
                     }

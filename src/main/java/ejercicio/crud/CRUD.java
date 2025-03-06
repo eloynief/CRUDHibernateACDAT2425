@@ -213,8 +213,10 @@ public class CRUD {
                 }
                 break;
             }
-            default:
+            default:{
+            	//System.out.println("Opcion no valida");
                 break;
+                }
         }
         return resultados;
     }
