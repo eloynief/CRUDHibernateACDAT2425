@@ -1,5 +1,6 @@
 package ejercicio.crud;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -182,6 +183,47 @@ public class CRUD {
         return success;
     }
 
+    
+    
+    public static List<Alumnado> filtrarAlumnos(int campo, String valor) {
+        List<Alumnado> resultados = new ArrayList<>();
+        
+        // Filtrar segun el campo seleccionado
+        switch (campo) {
+            case 1: { // Nombre
+                for (Alumnado alumno : listaAlumnos) {
+                    if (alumno.getNombre().equalsIgnoreCase(valor)) {
+                        resultados.add(alumno);
+                    }
+                }
+                break;
+            }
+            case 2: { // Apellido
+                for (Alumnado alumno : listaAlumnos) {
+                    if (alumno.getApellido().equalsIgnoreCase(valor)) {
+                        resultados.add(alumno);
+                    }
+                }
+                break;
+            }
+            case 3: { // Fecha de nacimiento
+                for (Alumnado alumno : listaAlumnos) {
+                    if (alumno.getFechaNacimiento().equals(valor)) {
+                        resultados.add(alumno);
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        return resultados;
+    }
+
+    
+    
+    
+    
     // MATRICULAS
 
     public static List<Matricula> leerMatriculas() {
@@ -361,6 +403,58 @@ public class CRUD {
         }
         return success;
     }
+    
+    
+    
+    
+    
+    
+
+    public static List<Matricula> filtrarMatriculas(int campo, String valor) {
+        List<Matricula> resultados = new ArrayList<>();
+        
+        // Filtrar segun el campo seleccionado
+        switch (campo) {
+            case 1: { // ID Alumno
+                for (Matricula matricula : listaMatriculas) {
+                    if (String.valueOf(matricula.getIdAlumno()).equals(valor)) {
+                        resultados.add(matricula);
+                    }
+                }
+                break;
+            }
+            case 2: { // ID Profesor
+                for (Matricula matricula : listaMatriculas) {
+                    if (String.valueOf(matricula.getIdProfesor()).equals(valor)) {
+                        resultados.add(matricula);
+                    }
+                }
+                break;
+            }
+            case 3: { // Asignatura
+                for (Matricula matricula : listaMatriculas) {
+                    if (matricula.getAsignatura().equalsIgnoreCase(valor)) {
+                        resultados.add(matricula);
+                    }
+                }
+                break;
+            }
+            case 4: { // Curso
+                for (Matricula matricula : listaMatriculas) {
+                    if (matricula.getCurso().equalsIgnoreCase(valor)) {
+                        resultados.add(matricula);
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        return resultados;
+    }
+
+    
+    
 
     // PROFESOR
 
@@ -522,4 +616,70 @@ public class CRUD {
         }
         return success;
     }
+    
+    
+    
+
+    public static List<Profesor> filtrarProfesores(int campo, String valor) {
+        List<Profesor> resultados = new ArrayList<>();
+        
+        // Filtrar segun el campo seleccionado
+        switch (campo) {
+            case 1: { // Nombre
+                for (Profesor profesor : listaProfesores) {
+                    if (profesor.getNombre().equalsIgnoreCase(valor)) {
+                        resultados.add(profesor);
+                    }
+                }
+                break;
+            }
+            case 2: { // Apellido
+                for (Profesor profesor : listaProfesores) {
+                    if (profesor.getApellidos().equalsIgnoreCase(valor)) {
+                        resultados.add(profesor);
+                    }
+                }
+                break;
+            }
+            case 3: { // Fecha de nacimiento
+                for (Profesor profesor : Profesores) {
+                    if (profesor.getFechaNacimiento().equals(valor)) {
+                        resultados.add(profesor);
+                    }
+                }
+                break;
+            }
+            case 4: { // Antigüedad
+                for (Profesor profesor : listaProfesores) {
+                    if (String.valueOf(profesor.getAntiguedad()).equals(valor)) {
+                        resultados.add(profesor);
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        return resultados;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
