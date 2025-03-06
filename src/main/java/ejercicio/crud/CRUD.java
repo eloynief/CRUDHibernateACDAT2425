@@ -184,8 +184,7 @@ public class CRUD {
     }
 
     
-    
-    public static List<Alumnado> filtrarAlumnos(int campo, String valor) {
+    public static List<Alumnado> filtrarAlumnos(List<Alumnado> listaAlumnos, int campo, String valor) {
         List<Alumnado> resultados = new ArrayList<>();
         
         // Filtrar segun el campo seleccionado
@@ -200,7 +199,7 @@ public class CRUD {
             }
             case 2: { // Apellido
                 for (Alumnado alumno : listaAlumnos) {
-                    if (alumno.getApellido().equalsIgnoreCase(valor)) {
+                    if (alumno.getApellidos().equalsIgnoreCase(valor)) {
                         resultados.add(alumno);
                     }
                 }
@@ -219,9 +218,6 @@ public class CRUD {
         }
         return resultados;
     }
-
-    
-    
     
     
     // MATRICULAS
@@ -410,14 +406,14 @@ public class CRUD {
     
     
 
-    public static List<Matricula> filtrarMatriculas(int campo, String valor) {
+    public static List<Matricula> filtrarMatriculas(List<Matricula> listaMatriculas, int campo, String valor) {
         List<Matricula> resultados = new ArrayList<>();
         
         // Filtrar segun el campo seleccionado
         switch (campo) {
             case 1: { // ID Alumno
                 for (Matricula matricula : listaMatriculas) {
-                    if (String.valueOf(matricula.getIdAlumno()).equals(valor)) {
+                    if (String.valueOf(matricula.getIdAlumnado()).equals(valor)) {
                         resultados.add(matricula);
                     }
                 }
@@ -425,7 +421,7 @@ public class CRUD {
             }
             case 2: { // ID Profesor
                 for (Matricula matricula : listaMatriculas) {
-                    if (String.valueOf(matricula.getIdProfesor()).equals(valor)) {
+                    if (String.valueOf(matricula.getIdProfesorado()).equals(valor)) {
                         resultados.add(matricula);
                     }
                 }
@@ -452,8 +448,6 @@ public class CRUD {
         }
         return resultados;
     }
-
-    
     
 
     // PROFESOR
@@ -618,9 +612,8 @@ public class CRUD {
     }
     
     
-    
 
-    public static List<Profesor> filtrarProfesores(int campo, String valor) {
+    public static List<Profesor> filtrarProfesores(List<Profesor> listaProfesores, int campo, String valor) {
         List<Profesor> resultados = new ArrayList<>();
         
         // Filtrar segun el campo seleccionado
@@ -642,7 +635,7 @@ public class CRUD {
                 break;
             }
             case 3: { // Fecha de nacimiento
-                for (Profesor profesor : Profesores) {
+                for (Profesor profesor : listaProfesores) {
                     if (profesor.getFechaNacimiento().equals(valor)) {
                         resultados.add(profesor);
                     }
