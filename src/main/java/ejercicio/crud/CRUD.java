@@ -908,4 +908,147 @@ public class CRUD {
     
     
     
+    
+    
+    // Borrar alumno por nombre
+    public static boolean borrarAlumnoPorNombre(String nombre) {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            List<Alumnado> alumnos = session.createQuery(
+                "FROM Alumnado a WHERE a.nombre = :nombre", Alumnado.class)
+                .setParameter("nombre", nombre)
+                .list();
+            
+            if (!alumnos.isEmpty()) {
+                for (Alumnado alumno : alumnos) {
+                    session.delete(alumno);
+                }
+                transaction.commit();
+                success = true;
+                System.out.println("Se eliminaron " + alumnos.size() + " alumnos con nombre: " + nombre);
+            } else {
+                System.out.println("No se encontraron alumnos con el nombre: " + nombre);
+            }
+            
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("No se puede borrar el alumno con nombre " + nombre + " porque está referenciado en Matriculas.");
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al borrar alumno por nombre: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+
+    // Borrar profesor por nombre
+    public static boolean borrarProfesorPorNombre(String nombre) {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            List<Profesor> profesores = session.createQuery(
+                "FROM Profesor p WHERE p.nombre = :nombre", Profesor.class)
+                .setParameter("nombre", nombre)
+                .list();
+            
+            if (!profesores.isEmpty()) {
+                for (Profesor profesor : profesores) {
+                    session.delete(profesor);
+                }
+                transaction.commit();
+                success = true;
+                System.out.println("Se eliminaron " + profesores.size() + " profesores con nombre: " + nombre);
+            } else {
+                System.out.println("No se encontraron profesores con el nombre: " + nombre);
+            }
+            
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("No se puede borrar el profesor con nombre " + nombre + " porque está referenciado en Matriculas.");
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al borrar profesor por nombre: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+
+    // Borrar matrícula por asignatura (como ejemplo de otro campo)
+    public static boolean borrarMatriculaPorAsignatura(String asignatura) {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            List<Matricula> matriculas = session.createQuery(
+                "FROM Matricula m WHERE m.asignatura = :asignatura", Matricula.class)
+                .setParameter("asignatura", asignatura)
+                .list();
+            
+            if (!matriculas.isEmpty()) {
+                for (Matricula matricula : matriculas) {
+                    session.delete(matricula);
+                }
+                transaction.commit();
+                success = true;
+                System.out.println("Se eliminaron " + matriculas.size() + " matrículas con asignatura: " + asignatura);
+            } else {
+                System.out.println("No se encontraron matrículas con la asignatura: " + asignatura);
+            }
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al borrar matrícula por asignatura: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

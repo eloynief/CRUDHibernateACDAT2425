@@ -132,12 +132,14 @@ public class Main {
                 break;
             }
             case 3: {
-                do {
-                    System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
-                    opcion = introducirInt();
-                    
-                    switch (opcion) {
-                    case 1: {
+                System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
+                int subOpcion = introducirInt();
+                System.out.println("¿Borrar por: 1: ID, 2: Nombre/Asignatura?");
+                int criterio = introducirInt();
+                
+                switch (subOpcion) {
+                case 1: { // Alumnado
+                    if (criterio == 1) {
                         System.out.println("Introduce el id del alumno:");
                         id = introducirInt();
                         if (CRUD.borrarAlumno(id)) {
@@ -145,9 +147,22 @@ public class Main {
                         } else {
                             System.out.println("El alumno no se ha podido borrar");
                         }
-                        break;
+                    } else if (criterio == 2) {
+                        sc.nextLine(); // Limpiar buffer
+                        System.out.println("Introduce el nombre del alumno:");
+                        String nombre = sc.nextLine();
+                        if (CRUD.borrarAlumnoPorNombre(nombre)) {
+                            System.out.println("Alumnos borrados correctamente");
+                        } else {
+                            System.out.println("No se pudieron borrar los alumnos con ese nombre");
+                        }
+                    } else {
+                        System.out.println("Criterio inválido");
                     }
-                    case 2: {
+                    break;
+                }
+                case 2: { // Matricula
+                    if (criterio == 1) {
                         System.out.println("Introduce el id de la matrícula:");
                         id = introducirInt();
                         if (CRUD.borrarMatricula(id)) {
@@ -155,9 +170,22 @@ public class Main {
                         } else {
                             System.out.println("La matrícula no se ha podido borrar");
                         }
-                        break;
+                    } else if (criterio == 2) {
+                        sc.nextLine(); // Limpiar buffer
+                        System.out.println("Introduce la asignatura de la matrícula:");
+                        String asignatura = sc.nextLine();
+                        if (CRUD.borrarMatriculaPorAsignatura(asignatura)) {
+                            System.out.println("Matrículas borradas correctamente");
+                        } else {
+                            System.out.println("No se pudieron borrar las matrículas con esa asignatura");
+                        }
+                    } else {
+                        System.out.println("Criterio inválido");
                     }
-                    case 3: {
+                    break;
+                }
+                case 3: { // Profesor
+                    if (criterio == 1) {
                         System.out.println("Introduce el id del profesor:");
                         id = introducirInt();
                         if (CRUD.borrarProfesor(id)) {
@@ -165,16 +193,28 @@ public class Main {
                         } else {
                             System.out.println("El profesor no se ha podido borrar");
                         }
-                        break;
+                    } else if (criterio == 2) {
+                        sc.nextLine(); // Limpiar buffer
+                        System.out.println("Introduce el nombre del profesor:");
+                        String nombre = sc.nextLine();
+                        if (CRUD.borrarProfesorPorNombre(nombre)) {
+                            System.out.println("Profesores borrados correctamente");
+                        } else {
+                            System.out.println("No se pudieron borrar los profesores con ese nombre");
+                        }
+                    } else {
+                        System.out.println("Criterio inválido");
                     }
-                    default: {
-                        System.out.println("Opción inválida. Elige otra opción");
-                        break;
-                    }
-                    }
-                } while (opcion <= 0 || opcion > 3);
+                    break;
+                }
+                default: {
+                    System.out.println("Opción inválida. Elige otra opción");
+                    break;
+                }
+                }
                 break;
             }
+
             case 4: {
                 do {
                     System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
