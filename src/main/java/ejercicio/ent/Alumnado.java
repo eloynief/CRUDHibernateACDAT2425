@@ -29,7 +29,7 @@ public class Alumnado implements Serializable {
 
     public Alumnado() {}
 
-    public Alumnado(String nombre, String apellidos, String fechaNacimiento) {
+    public Alumnado(String nombre, String apellidos, String fechaNacimiento) throws ParseException {
         this.nombre = nombre;
         this.apellidos = apellidos;
 		setFechaNacimiento(fechaNacimiento);
@@ -51,7 +51,7 @@ public class Alumnado implements Serializable {
         
     }
     
-    public Alumnado(int idAlumnado, String nombre, String apellidos, String fechaNacimiento) {
+    public Alumnado(int idAlumnado, String nombre, String apellidos, String fechaNacimiento) throws ParseException {
 		this.idAlumnado = idAlumnado;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -91,25 +91,17 @@ public class Alumnado implements Serializable {
     public void setApellidos(String apellidos) { this.apellidos = apellidos; }
     
     public String getFechaNacimiento() { 
-    	
-    	return fechaNacimiento.toString(); 
-    	
+        return fechaNacimiento != null ? fechaNacimiento.toString() : null; 
     }
     
-    public void setFechaNacimiento(String fechaNacimiento) throws NullPointerException { 
-        SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/yyyy");
-        Date date;
+    public void setFechaNacimiento(String fechaNacimiento) throws ParseException {
+        if (fechaNacimiento == null) {
+            throw new IllegalArgumentException("La fecha de nacimiento no puede ser nula");
+        }
         
-        try {
-            date = dateFormater.parse(fechaNacimiento);
-        } catch (ParseException| NullPointerException e) {
-            e.getMessage(); // Muestra el error en la consola
-            try {
-                date = dateFormater.parse("01/01/2000"); // Valor por defecto
-            } catch (ParseException ex) {
-                throw new RuntimeException("Error al introducir la fecha por defecto"); // No debería ocurrir
-            }
-        }   
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormatter.setLenient(false); // Para ser estrictos con el formato
+        Date date = dateFormatter.parse(fechaNacimiento); // Lanzará ParseException si es inválida
         this.fechaNacimiento = date;
     }
 

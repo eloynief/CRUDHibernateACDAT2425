@@ -1,6 +1,6 @@
 package ejercicio.views;
 
-import java.sql.Date;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -14,28 +14,18 @@ import ejercicio.ent.Profesor;
 
 import com.diogonunes.jcolor.*;
 
-
 public class Main {
     
-    /**
-     * Scanner estatico para poder usarlo en otras funciones diferentes del main
-     * (Privado)
-     */
     private static Scanner sc = new Scanner(System.in);
     
     public static void main(String[] args) {
-
-        List<Alumnado> alumnos = new ArrayList<Alumnado>();
-        List<Matricula> matriculas = new ArrayList<Matricula>();
-        List<Profesor> profesores = new ArrayList<Profesor>();
-        
-        Alumnado alumno = new Alumnado();
-        Matricula matricula = new Matricula();
-        Profesor profesor = new Profesor();
+        List<Alumnado> alumnos = new ArrayList<>();
+        List<Matricula> matriculas = new ArrayList<>();
+        List<Profesor> profesores = new ArrayList<>();
         
         int opcion = 0;
         int id = 0;
-        String texto="";
+        String texto = "";
 
         try {
             Conexion.setUp();
@@ -43,15 +33,13 @@ public class Main {
             e.printStackTrace();
         }
         
-        System.out.println(Ansi.colorize(" ඞ EJERCICIO CRUD ඞ ",Attribute.BACK_COLOR(200, 0, 0),Attribute.TEXT_COLOR(200,200,20)));
+        System.out.println(Ansi.colorize(" ඞ EJERCICIO CRUD ඞ ", Attribute.BACK_COLOR(200, 0, 0), Attribute.TEXT_COLOR(200, 200, 20)));
 
         do {
             menu();
-            
             opcion = introducirInt();
             
             switch (opcion) {
-            
             case 1: {
                 do {
                     System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
@@ -59,29 +47,40 @@ public class Main {
                     
                     switch (opcion) {
                     case 1: {
-                        alumno = insertarAlumno();
-                        CRUD.insertaAlumno(alumno);
+                        Alumnado alumno = insertarAlumno();
+                        if (CRUD.insertaAlumno(alumno)) {
+                            System.out.println("Alumno insertado correctamente");
+                        } else {
+                            System.out.println("No se pudo insertar el alumno");
+                        }
                         break;
                     }
                     case 2: {
-                        matricula = insertaMatricula();
-                        CRUD.insertarMatricula(matricula);
+                        Matricula matricula = insertaMatricula();
+                        if (CRUD.insertarMatricula(matricula)) {
+                            System.out.println("Matrícula insertada correctamente");
+                        } else {
+                            System.out.println("No se pudo insertar la matrícula");
+                        }
                         break;
                     }
                     case 3: {
-                        profesor = insertaProfesor();
-                        CRUD.insertarProfesor(profesor);
+                        Profesor profesor = insertaProfesor();
+                        if (CRUD.insertarProfesor(profesor)) {
+                            System.out.println("Profesor insertado correctamente");
+                        } else {
+                            System.out.println("No se pudo insertar el profesor");
+                        }
                         break;
                     }
                     default: {
-                        System.out.println("Opcion invalida. Elige otra opcion");
+                        System.out.println("Opción inválida. Elige otra opción");
                         break;
                     }
                     }
                 } while (opcion <= 0 || opcion > 3);
                 break;
             }
-                
             case 2: {
                 do {
                     System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
@@ -91,51 +90,47 @@ public class Main {
                     case 1: {
                         System.out.println("Introduce el id del alumno:");
                         id = introducirInt();
-
-                        alumno = insertarAlumno();
+                        Alumnado alumno = insertarAlumno();
                         alumno.setIdAlumnado(id);
                         if (CRUD.actualizarAlumno(id, alumno)) {
-                            System.out.println("El alumno se actualizo correctamente");
+                            System.out.println("El alumno se actualizó correctamente");
                         } else {
                             System.out.println("El alumno no se ha podido actualizar");
                         }
                         break;
                     }
                     case 2: {
-                        System.out.println("Introduce el id de la matricula:");
+                        System.out.println("Introduce el id de la matrícula:");
                         id = introducirInt();
-
-                        matricula = insertaMatricula();
+                        Matricula matricula = insertaMatricula();
                         matricula.setIdMatricula(id);
                         if (CRUD.actualizarMatricula(id, matricula)) {
-                            System.out.println("La matricula se actualizo correctamente");
+                            System.out.println("La matrícula se actualizó correctamente");
                         } else {
-                            System.out.println("La matricula no se ha podido actualizar");
+                            System.out.println("La matrícula no se ha podido actualizar");
                         }
                         break;
                     }
                     case 3: {
                         System.out.println("Introduce el id del profesor:");
                         id = introducirInt();
-
-                        profesor = insertaProfesor();
+                        Profesor profesor = insertaProfesor();
                         profesor.setIdProfesor(id);
                         if (CRUD.actualizarProfesor(id, profesor)) {
-                            System.out.println("El profesor se actualizo correctamente");
+                            System.out.println("El profesor se actualizó correctamente");
                         } else {
                             System.out.println("El profesor no se ha podido actualizar");
                         }
                         break;
                     }
                     default: {
-                        System.out.println("Opcion invalida. Elige otra opcion");
+                        System.out.println("Opción inválida. Elige otra opción");
                         break;
                     }
                     }
                 } while (opcion <= 0 || opcion > 3);
                 break;
             }
-
             case 3: {
                 do {
                     System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
@@ -145,7 +140,6 @@ public class Main {
                     case 1: {
                         System.out.println("Introduce el id del alumno:");
                         id = introducirInt();
-                        
                         if (CRUD.borrarAlumno(id)) {
                             System.out.println("El alumno se ha borrado");
                         } else {
@@ -154,13 +148,12 @@ public class Main {
                         break;
                     }
                     case 2: {
-                        System.out.println("Introduce el id de la matricula:");
+                        System.out.println("Introduce el id de la matrícula:");
                         id = introducirInt();
-                        
                         if (CRUD.borrarMatricula(id)) {
-                            System.out.println("La matricula se ha borrado");
+                            System.out.println("La matrícula se ha borrado");
                         } else {
-                            System.out.println("La matricula no se ha podido borrar");
+                            System.out.println("La matrícula no se ha podido borrar");
                         }
                         break;
                     }
@@ -175,14 +168,13 @@ public class Main {
                         break;
                     }
                     default: {
-                        System.out.println("Opcion invalida. Elige otra opcion");
+                        System.out.println("Opción inválida. Elige otra opción");
                         break;
                     }
                     }
                 } while (opcion <= 0 || opcion > 3);
                 break;
             }
-
             case 4: {
                 do {
                     System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
@@ -211,89 +203,73 @@ public class Main {
                         break;
                     }
                     default: {
-                        System.out.println("Opcion invalida. Elige otra opcion");
+                        System.out.println("Opción inválida. Elige otra opción");
                         break;
                     }
                     }
                 } while (opcion <= 0 || opcion > 3);
                 break;
             }
-            
             case 5: {
                 do {
                     System.out.println("Elige una opcion: 1: Alumnado, 2: Matricula, 3: Profesor");
                     opcion = introducirInt();
+                    sc.nextLine(); // Limpiar buffer
                     
                     switch (opcion) {
                     case 1: {
-                    	
-                    	System.out.println("Elige la opcion a filtrar: 1: Nombre, 2: Apellido, 3:");
-                    	
-                    	do {
-                    		if(opcion<1||opcion>3) {
-                    			System.out.println("Opcion no valida");
-                    		}
-                    	}while(opcion<1||opcion>3);
-                    	
-                    	System.out.println("Introduce el valor de la opcion que vas a usar como filtro:");
-                    	texto=sc.nextLine();
-                    	
-                    	
-                    	List<Alumnado> als=CRUD.filtrarAlumnos(alumnos, id, texto);
-                    	
-                    	/**
-                    	System.out.println("Introduce el ID");
-                        id = introducirInt();
-                        alumno = CRUD.leerAlumnoPorID(id);
-                        if (alumno != null) {
-                            System.out.println(alumno);
+                        System.out.println("Elige la opcion a filtrar: 1: Nombre, 2: Apellido, 3: Fecha de nacimiento");
+                        int filtroOpcion = introducirInt();
+                        sc.nextLine();
+                        System.out.println("Introduce el valor de la opcion que vas a usar como filtro:");
+                        texto = sc.nextLine();
+                        alumnos = CRUD.leerAlumnos();
+                        List<Alumnado> als = CRUD.filtrarAlumnos(alumnos, filtroOpcion, texto);
+                        if (!als.isEmpty()) {
+                            for (Alumnado a : als) {
+                                System.out.println(a);
+                            }
                         } else {
-                            System.out.println(Ansi.colorize(("No se encontro alumno con ID: " + id),Attribute.BACK_COLOR(200, 0, 0)));
+                            System.out.println("No se encontraron alumnos con ese criterio");
                         }
                         break;
-                        */
-                    	
                     }
                     case 2: {
                         System.out.println("Elige la opcion a filtrar: 1: ID Alumno, 2: ID Profesor, 3: Asignatura, 4: Curso");
-                        
-                        do {
-                            if(opcion < 1 || opcion > 4) {
-                                System.out.println("Opcion no valida");
-                            }
-                        } while(opcion < 1 || opcion > 4);
-                        
+                        int filtroOpcion = introducirInt();
+                        sc.nextLine();
                         System.out.println("Introduce el valor de la opcion que vas a usar como filtro:");
                         texto = sc.nextLine();
-                        
-                        List<Matricula> mats = CRUD.filtrarMatriculas(matriculas, opcion, texto);
-                        // Aquí puedes mostrar los resultados
-                        for (Matricula m : mats) {
-                            System.out.println(m);
+                        matriculas = CRUD.leerMatriculas();
+                        List<Matricula> mats = CRUD.filtrarMatriculas(matriculas, filtroOpcion, texto);
+                        if (!mats.isEmpty()) {
+                            for (Matricula m : mats) {
+                                System.out.println(m);
+                            }
+                        } else {
+                            System.out.println("No se encontraron matrículas con ese criterio");
                         }
                         break;
                     }
                     case 3: {
                         System.out.println("Elige la opcion a filtrar: 1: Nombre, 2: Apellido, 3: Fecha de nacimiento, 4: Antigüedad");
-                        
-                        do {
-                            if(opcion < 1 || opcion > 4) {
-                                System.out.println("Opcion no valida");
-                            }
-                        } while(opcion < 1 || opcion > 4);
-                        
+                        int filtroOpcion = introducirInt();
+                        sc.nextLine();
                         System.out.println("Introduce el valor de la opcion que vas a usar como filtro:");
                         texto = sc.nextLine();
-                        
-                        List<Profesor> profs = CRUD.filtrarProfesores(profesores, opcion, texto);
-                        // Aquí puedes mostrar los resultados
-                        for (Profesor p : profs) {
-                            System.out.println(p);
+                        profesores = CRUD.leerProfesores();
+                        List<Profesor> profs = CRUD.filtrarProfesores(profesores, filtroOpcion, texto);
+                        if (!profs.isEmpty()) {
+                            for (Profesor p : profs) {
+                                System.out.println(p);
+                            }
+                        } else {
+                            System.out.println("No se encontraron profesores con ese criterio");
                         }
                         break;
                     }
                     default: {
-                        System.out.println("Opcion invalida. Elige otra opcion");
+                        System.out.println("Opción inválida. Elige otra opción");
                         break;
                     }
                     }
@@ -301,29 +277,35 @@ public class Main {
                 break;
             }
             
-            case 10: {
-                System.out.println("ENTRANDO MODO DE PRUEBAS...");
-                System.out.println("Que deseas imprimir?: 1: Alumno, 2: Profesor");
-                
-                do {
-                    opcion = introducirInt();
-                    
-                    switch (opcion) {
-                    case 1: {
-                        System.out.println("Introduce el alumno");
-                        alumno = insertarAlumno();
-                        System.out.println(alumno);
-                        break;
+            case 6: {
+                System.out.println("Elige una opción: 1: Borrar todos los alumnos, 2: Borrar todas las matrículas, 3: Borrar todos los profesores");
+                int subOpcion = introducirInt();
+                switch (subOpcion) {
+                case 1:
+                    if (CRUD.dropTablaAlumnos()) {
+                        System.out.println("Todos los alumnos han sido borrados.");
+                    } else {
+                        System.out.println("No se pudieron borrar los alumnos.");
                     }
-                    case 2: {
-                        System.out.println("Introduce el profesor");
-                        alumno = insertarAlumno();
-                        System.out.println(alumno);
-                        break;
+                    break;
+                case 2:
+                    if (CRUD.dropTablaMatriculas()) {
+                        System.out.println("Todas las matrículas han sido borradas.");
+                    } else {
+                        System.out.println("No se pudieron borrar las matrículas.");
                     }
-                    
+                    break;
+                case 3:
+                    if (CRUD.dropTablaProfesores()) {
+                        System.out.println("Todos los profesores han sido borrados.");
+                    } else {
+                        System.out.println("No se pudieron borrar los profesores.");
                     }
-                } while (opcion <= 0 || opcion >= 3); // Corregido: debería ser > 2
+                    break;
+                default:
+                    System.out.println("Opción inválida.");
+                    break;
+                }
                 break;
             }
             
@@ -331,10 +313,14 @@ public class Main {
                 System.out.println("Saliendo del CRUD...");
                 break;
             }
+            default: {
+                System.out.println("Opción no válida");
+                break;
+            }
             }
         } while (opcion != 0);
         
-        sc.close(); // Cerrar el Scanner al finalizar
+        sc.close();
     }
 
     private static int introducirInt() {
@@ -345,7 +331,7 @@ public class Main {
                 dato = sc.nextInt();
                 entradaValida = true;
             } catch (InputMismatchException i) {
-                System.out.println(Ansi.colorize(("Tipo de dato no valido"),Attribute.BACK_COLOR(200, 50, 50),Attribute.BLACK_TEXT()));
+                System.out.println(Ansi.colorize("Tipo de dato no válido", Attribute.BACK_COLOR(200, 50, 50), Attribute.BLACK_TEXT()));
                 sc.nextLine();
             }
         } while (!entradaValida);
@@ -353,67 +339,76 @@ public class Main {
     }
     
     private static void menu() {
-    	System.out.println("    /\\_____/\\");
-    	System.out.println("   /  o   o  \\");
-    	System.out.println("  ( ==  ^  == )");
-    	System.out.println("   )         (");
-    	System.out.println("  /           \\");
-    	System.out.println(" ( (  )   (  ) )");
-    	System.out.println("(__(__)___(__)__)");
-    	
-        System.out.println(Ansi.colorize("=========CRUD=========",Attribute.TEXT_COLOR(20,200,20)));
-        System.out.println("Inserta opcion:");
-        System.out.println(Ansi.colorize("1 Inserta",Attribute.TEXT_COLOR(20,200,20)));
+        System.out.println(Ansi.colorize("=========CRUD=========", Attribute.TEXT_COLOR(20, 200, 20)));
+        System.out.println("Inserta opción:");
+        System.out.println(Ansi.colorize("1 Inserta", Attribute.TEXT_COLOR(20, 200, 20)));
         System.out.println("2 Actualizar");
-        System.out.println(Ansi.colorize("3 Borrar",Attribute.TEXT_COLOR(20,200,20)));
+        System.out.println(Ansi.colorize("3 Borrar", Attribute.TEXT_COLOR(20, 200, 20)));
         System.out.println("4 Obtener datos");
-        System.out.println(Ansi.colorize("5 Obtener por ID",Attribute.TEXT_COLOR(20,200,20))); // Corregido: debía ser 5, no 4
+        System.out.println(Ansi.colorize("5 Filtrar", Attribute.TEXT_COLOR(20, 200, 20)));
+        System.out.println(Ansi.colorize("6 BORRAR TABLAS", Attribute.TEXT_COLOR(200, 20, 20)));
         System.out.println("0 Salir");
-        System.out.println(Ansi.colorize("======================",Attribute.TEXT_COLOR(20,200,20)));
+        System.out.println(Ansi.colorize("======================", Attribute.TEXT_COLOR(20, 200, 20)));
         System.out.println("");
     }
     
     private static Alumnado insertarAlumno() {
-        Alumnado alumno = new Alumnado();
         sc.nextLine(); 
-
         System.out.println("Introduce el nombre");
         String nombre = sc.nextLine();
         
         System.out.println("Introduce el apellido");
         String apellido = sc.nextLine();
         
-        System.out.println("Introduce la fecha de nacimiento");
-        String fechaNacimiento = sc.nextLine();
+        Alumnado alumno = null;
+        boolean fechaValida = false;
+        do {
+            System.out.println("Introduce la fecha de nacimiento (dd/MM/yyyy, ejemplo: 15/05/2000)");
+            String fechaNacimiento = sc.nextLine();
+            try {
+                alumno = new Alumnado(nombre, apellido, fechaNacimiento);
+                fechaValida = true;
+            } catch (ParseException e) {
+                System.out.println(Ansi.colorize("Fecha inválida: " + e.getMessage() + ". Use dd/MM/yyyy (ejemplo: 15/05/2000), y que tenga el mes, dia y año correctos", Attribute.TEXT_COLOR(255, 0, 0)));
+            } catch (IllegalArgumentException e) {
+                System.out.println(Ansi.colorize("Error: " + e.getMessage(), Attribute.TEXT_COLOR(255, 0, 0)));
+            }
+        } while (!fechaValida);
         
-        alumno = new Alumnado(nombre, apellido, fechaNacimiento);
         return alumno;
     }
     
     private static Profesor insertaProfesor() {
-        Profesor profesor = new Profesor();
-        
         sc.nextLine(); 
-        
         System.out.println("Introduce el nombre");
         String nombre = sc.nextLine();
         
         System.out.println("Introduce el apellido");
         String apellido = sc.nextLine();
         
-        System.out.println("Introduce la fecha de nacimiento");
-        String fechaNacimiento = sc.nextLine();
+        Profesor profesor = null;
+        boolean fechaValida = false;
+        do {
+            System.out.println("Introduce la fecha de nacimiento (dd/MM/yyyy, ejemplo: 15/05/2000)");
+            String fechaNacimiento = sc.nextLine();
+            try {
+                profesor = new Profesor(nombre, apellido, fechaNacimiento, 0); // Antigüedad temporal
+                fechaValida = true;
+            } catch (ParseException e) {
+                System.out.println(Ansi.colorize("Fecha inválida: " + e.getMessage() + ". Use dd/MM/yyyy (ejemplo: 15/05/2000), y que tenga el mes, dia y año correctos", Attribute.TEXT_COLOR(255, 0, 0)));
+            } catch (IllegalArgumentException e) {
+                System.out.println(Ansi.colorize("Error: " + e.getMessage(), Attribute.TEXT_COLOR(255, 0, 0)));
+            }
+        } while (!fechaValida);
         
-        System.out.println("Introduce la antiguedad");
+        System.out.println("Introduce la antigüedad");
         int antiguedad = introducirInt();
-
-        profesor = new Profesor(nombre, apellido, fechaNacimiento, antiguedad);
+        profesor.setAntiguedad(antiguedad);
+        
         return profesor;
     }
     
     private static Matricula insertaMatricula() {
-        Matricula matricula = new Matricula();
-        
         System.out.println("Introduce el ID del alumno");
         int idAlumno = introducirInt(); 
         
@@ -421,14 +416,12 @@ public class Main {
         int idProfesor = introducirInt(); 
         
         sc.nextLine(); 
-        
         System.out.println("Introduce la asignatura");
         String asignatura = sc.nextLine();
         
         System.out.println("Introduce el curso");
         String curso = sc.nextLine();
         
-        matricula = new Matricula(idProfesor, idAlumno, asignatura, curso);
-        return matricula;
+        return new Matricula(idProfesor, idAlumno, asignatura, curso);
     }
 }

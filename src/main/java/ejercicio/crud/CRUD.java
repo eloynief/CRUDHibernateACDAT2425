@@ -1,5 +1,6 @@
 package ejercicio.crud;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Session;
@@ -77,8 +78,8 @@ public class CRUD {
         boolean success = false;
         
         try {
-            if (a == null || a.getFechaNacimiento() == null) {
-                throw new IllegalArgumentException("El alumno o su fecha de nacimiento no pueden ser nulos");
+            if (a == null) {
+                throw new IllegalArgumentException("El alumno no puede ser nulo");
             }
             
             Conexion.compruebaConexion();
@@ -95,7 +96,7 @@ public class CRUD {
             }
             System.err.println("Error al insertar alumno: " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            System.err.println("Datos invalidos: " + e.getMessage());
+            System.err.println("Datos inválidos: " + e.getMessage());
         } finally {
             if (session != null && session.isOpen()) {
                 session.close();
@@ -120,17 +121,16 @@ public class CRUD {
             
             Alumnado alumno = session.get(Alumnado.class, id);
             if (alumno != null) {
-
-                if(alumnoNuevo.getNombre()!=null||!alumnoNuevo.getNombre().equals("")) {
-                alumno.setNombre(alumnoNuevo.getNombre());
+                if (alumnoNuevo.getNombre() != null && !alumnoNuevo.getNombre().isEmpty()) {
+                    alumno.setNombre(alumnoNuevo.getNombre());
                 }
                 
-                if(alumnoNuevo.getApellidos()!=null||!alumnoNuevo.getApellidos().equals("")) {
-                alumno.setApellidos(alumnoNuevo.getApellidos());
+                if (alumnoNuevo.getApellidos() != null && !alumnoNuevo.getApellidos().isEmpty()) {
+                    alumno.setApellidos(alumnoNuevo.getApellidos());
                 }
                 
-                if(alumnoNuevo.getFechaNacimiento()!=null) {
-                alumno.setFechaNacimiento(alumnoNuevo.getFechaNacimiento());
+                if (alumnoNuevo.getFechaNacimiento() != null) {
+                    alumno.setFechaNacimiento(alumnoNuevo.getFechaNacimiento()); // Puede lanzar ParseException
                 }
                 
                 session.update(alumno);
@@ -144,7 +144,9 @@ public class CRUD {
             }
             System.err.println("Error al actualizar alumno: " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            System.err.println("Datos invalidos: " + e.getMessage());
+            System.err.println("Datos inválidos: " + e.getMessage());
+        } catch (ParseException e) {
+            System.err.println("Formato de fecha inválido: " + e.getMessage());
         } finally {
             if (session != null && session.isOpen()) {
                 session.close();
@@ -516,8 +518,8 @@ public class CRUD {
         boolean success = false;
         
         try {
-            if (p == null || p.getFechaNacimiento() == null) {
-                throw new IllegalArgumentException("El profesor o su fecha de nacimiento no pueden ser nulos");
+            if (p == null) {
+                throw new IllegalArgumentException("El profesor no puede ser nulo");
             }
             
             Conexion.compruebaConexion();
@@ -559,10 +561,18 @@ public class CRUD {
             
             Profesor profesor = session.get(Profesor.class, id);
             if (profesor != null) {
-                profesor.setNombre(profesorNuevo.getNombre());
-                profesor.setApellidos(profesorNuevo.getApellidos());
-                profesor.setFechaNacimiento(profesorNuevo.getFechaNacimiento());
-                profesor.setAntiguedad(profesorNuevo.getAntiguedad());
+                if (profesorNuevo.getNombre() != null && !profesorNuevo.getNombre().isEmpty()) {
+                    profesor.setNombre(profesorNuevo.getNombre());
+                }
+                if (profesorNuevo.getApellidos() != null && !profesorNuevo.getApellidos().isEmpty()) {
+                    profesor.setApellidos(profesorNuevo.getApellidos());
+                }
+                if (profesorNuevo.getFechaNacimiento() != null) {
+                    profesor.setFechaNacimiento(profesorNuevo.getFechaNacimiento()); // Puede lanzar ParseException
+                }
+                if (profesorNuevo.getAntiguedad() >= 0) { // Evitar valores negativos
+                    profesor.setAntiguedad(profesorNuevo.getAntiguedad());
+                }
                 session.update(profesor);
                 transaction.commit();
                 success = true;
@@ -575,6 +585,8 @@ public class CRUD {
             System.err.println("Error al actualizar profesor: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.err.println("Datos inválidos: " + e.getMessage());
+        } catch (ParseException e) {
+            System.err.println("Formato de fecha inválido: " + e.getMessage());
         } finally {
             if (session != null && session.isOpen()) {
                 session.close();
@@ -583,7 +595,53 @@ public class CRUD {
         return success;
     }
 
+    
+    
     public static boolean borrarProfesor(int idProfesor) {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            Profesor profesor = session.get(Profesor.class, idProfesor);
+            if (profesor != null) {
+                // Buscar matrículas asociadas
+                List<Matricula> matriculas = session.createQuery(
+                    "FROM Matricula m WHERE m.idProfesorado = :idProfesor", Matricula.class)
+                    .setParameter("idProfesor", idProfesor)
+                    .list();
+                
+                // Desasociar las matrículas (por ejemplo, establecer idProfesorado a null)
+                for (Matricula matricula : matriculas) {
+                    matricula.setIdProfesorado(0); // O asignar otro profesor si aplica
+                    session.update(matricula);
+                }
+                
+                // Eliminar el profesor
+                session.delete(profesor);
+                transaction.commit();
+                success = true;
+            }
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al borrar profesor: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+    
+    
+    public static boolean borrarProfesorB(int idProfesor) {
         Session session = null;
         Transaction transaction = null;
         boolean success = false;
@@ -662,11 +720,184 @@ public class CRUD {
     
     
     
+    public static boolean borrarTodosAlumnos() {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            int deletedCount = session.createNativeQuery("DELETE FROM Alumnos").executeUpdate();
+            transaction.commit();
+            success = true;
+            System.out.println("Se eliminaron " + deletedCount + " alumnos.");
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al borrar todos los alumnos: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+
+    // MATRICULAS
+
+    // ... (Código existente para leerMatriculas, leerMatriculaPorID, insertarMatricula, actualizarMatricula, borrarMatricula, filtrarMatriculas) ...
+
+    public static boolean borrarTodasMatriculas() {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            int deletedCount = session.createNativeQuery("DELETE FROM Matriculas").executeUpdate();
+            transaction.commit();
+            success = true;
+            System.out.println("Se eliminaron " + deletedCount + " matrículas.");
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al borrar todas las matrículas: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+
+    // PROFESOR
+
+    // ... (Código existente para leerProfesores, leerProfesorPorID, insertarProfesor, actualizarProfesor, borrarProfesor, borrarProfesorB, filtrarProfesores) ...
+
+    public static boolean borrarTodosProfesores() {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            int deletedCount = session.createNativeQuery("DELETE FROM Profesores").executeUpdate();
+            transaction.commit();
+            success = true;
+            System.out.println("Se eliminaron " + deletedCount + " profesores.");
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al borrar todos los profesores: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
     
     
     
-    
-    
+    // Eliminación de tablas con DROP TABLE CASCADE
+    public static boolean dropTablaAlumnos() {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            session.createNativeQuery("DROP TABLE Alumnos CASCADE").executeUpdate();
+            transaction.commit();
+            success = true;
+            System.out.println("La tabla Alumnos y sus dependencias han sido eliminadas.");
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al eliminar la tabla Alumnos: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+
+    public static boolean dropTablaMatriculas() {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            session.createNativeQuery("DROP TABLE Matriculas CASCADE").executeUpdate();
+            transaction.commit();
+            success = true;
+            System.out.println("La tabla Matriculas ha sido eliminada.");
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al eliminar la tabla Matriculas: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
+
+    public static boolean dropTablaProfesores() {
+        Session session = null;
+        Transaction transaction = null;
+        boolean success = false;
+        
+        try {
+            Conexion.compruebaConexion();
+            session = Conexion.miSeccion.openSession();
+            transaction = session.beginTransaction();
+            
+            session.createNativeQuery("DROP TABLE Profesores CASCADE").executeUpdate();
+            transaction.commit();
+            success = true;
+            System.out.println("La tabla Profesores y sus dependencias han sido eliminadas.");
+            
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Error al eliminar la tabla Profesores: " + e.getMessage());
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return success;
+    }
     
     
     

@@ -30,67 +30,18 @@ public class Profesor implements Serializable {
 
     public Profesor() {}
 
-    
-    
-    
-    
-    
-    
-    
-    public Profesor(String nombre, String apellidos, String fechaNacimiento, int antiguedad) {
-		super();
-		this.nombre = nombre;
-		this.apellidos = apellidos;
-		setFechaNacimiento(fechaNacimiento);
-		/**
-		SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/yyyy");
-    	Date date;
-    	
-		try {
-			
-	    	// convert string to date
-			date = dateFormater.parse(fechaNacimiento);
-	    	
-	    	this.fechaNacimiento = date;
-	    	
-		} catch (ParseException e) {
-			e.getMessage();
-		}  
-        */
-		
-		
-		
-		this.antiguedad = antiguedad;
-	}
+    public Profesor(String nombre, String apellidos, String fechaNacimiento, int antiguedad) throws ParseException {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        setFechaNacimiento(fechaNacimiento); // Lanzará ParseException si la fecha es inválida
+        this.antiguedad = antiguedad;
+    }
 
-
-
-
-
-
-
-
-	public Profesor(int idProfesor, String nombre, String apellidos, String fechaNacimiento, int antiguedad) {
+    public Profesor(int idProfesor, String nombre, String apellidos, String fechaNacimiento, int antiguedad) throws ParseException {
         this.idProfesor = idProfesor;
         this.nombre = nombre;
         this.apellidos = apellidos;
-		setFechaNacimiento(fechaNacimiento);
-		/**
-		SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/yyyy");
-    	Date date;
-    	
-		try {
-			
-	    	// convert string to date
-			date = dateFormater.parse(fechaNacimiento);
-	    	
-	    	this.fechaNacimiento = date;
-	    	
-		} catch (ParseException e) {
-			e.getMessage();
-		}  
-        */
-        
+        setFechaNacimiento(fechaNacimiento); // Lanzará ParseException si la fecha es inválida
         this.antiguedad = antiguedad;
     }
 
@@ -101,48 +52,32 @@ public class Profesor implements Serializable {
     public String getApellidos() { return apellidos; }
     public void setApellidos(String apellidos) { this.apellidos = apellidos; }
     
-
     public String getFechaNacimiento() { 
-    	
-    	return fechaNacimiento.toString(); 
-    	
+        return fechaNacimiento != null ? fechaNacimiento.toString() : null; 
     }
     
-    public void setFechaNacimiento(String fechaNacimiento) { 
-        SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/yyyy");
-        Date date;
+    public void setFechaNacimiento(String fechaNacimiento) throws ParseException {
+        if (fechaNacimiento == null) {
+            throw new IllegalArgumentException("La fecha de nacimiento no puede ser nula");
+        }
         
-        try {
-            date = dateFormater.parse(fechaNacimiento);
-        } catch (ParseException | NullPointerException e) {
-            e.printStackTrace(); // Muestra el error en la consola
-            try {
-                date = dateFormater.parse("01/01/2000"); // Valor por defecto
-            } catch (ParseException | NullPointerException ex) {
-                throw new RuntimeException("Error al parsear la fecha por defecto"); // No debería ocurrir
-            }
-        }   
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormatter.setLenient(false); // Para ser estrictos con el formato
+        Date date = dateFormatter.parse(fechaNacimiento); // Lanzará ParseException si es inválida
         this.fechaNacimiento = date;
     }
-
-    
     
     public int getAntiguedad() { return antiguedad; }
     public void setAntiguedad(int antiguedad) { this.antiguedad = antiguedad; }
-    
-    
 
-	@Override
-	public String toString() {
-		
-		String texto="-----Profesor-----\n";
-		texto+="ID de la Matricula: "+idProfesor+"\n";
-		texto+="Nombre: "+nombre+"\n";
-		texto+="Apellidos: "+apellidos+"\n";
-		texto+="Fecha de Nacimiento: "+fechaNacimiento+"\n";
-		texto+="Antiguedad: "+antiguedad+"\n";
-		
-		return texto;
-	}
-    
+    @Override
+    public String toString() {
+        String texto = "-----Profesor-----\n";
+        texto += "ID: " + idProfesor + "\n"; // Corregido: "ID de la Matricula" a "ID"
+        texto += "Nombre: " + nombre + "\n";
+        texto += "Apellidos: " + apellidos + "\n";
+        texto += "Fecha de Nacimiento: " + (fechaNacimiento != null ? fechaNacimiento : "No definida") + "\n";
+        texto += "Antiguedad: " + antiguedad + "\n";
+        return texto;
+    }
 }
